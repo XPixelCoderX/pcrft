@@ -1,6 +1,6 @@
 # PCrft Xbox Invite Bot
 
-The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock players fast, simple, and automated. It combines a **Node.js Xbox Live bot** with a **Python-powered dark neon dashboard**, providing a clean control panel for sending Xbox invites and helpful messages instantly.
+The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock players fast, simple, and automated. It combines a **Node.js Xbox Live bot** with a built-in dark dashboard, providing a clean control panel for sending Xbox invites and helpful messages instantly.
 
 ---
 
@@ -10,7 +10,7 @@ The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock p
 * No passwords stored locally
 * Connects to Xbox Live using `bedrock-portal`
 * Compatible with any Minecraft Bedrock Edition server
-* Modern dark neon dashboard
+* Modern dark gray dashboard
 * Simple Gamertag-based interface
 * Three quick actions:
 
@@ -19,7 +19,6 @@ The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock p
   * Invite + Message
 * Live portal status indicator
 * Mobile-friendly design
-* Easy HTTPS setup with Nginx Proxy Manager
 
 ### Default Message
 
@@ -33,10 +32,6 @@ The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock p
 
 * Node.js 20 or newer
 * Node.js 22 recommended
-
-### Python
-
-* Python 3.9 or newer
 
 ### Other
 
@@ -54,9 +49,7 @@ git clone https://github.com/XPixelCoderX/pcrft.git
 cd pcrft
 ```
 
----
-
-### 2. Install Node Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
@@ -64,25 +57,11 @@ npm install
 
 This installs:
 
-* bedrock-portal
-* prismarine-auth
-* express
-* cors
-* js-yaml
-
----
-
-### 3. Install Python Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-This installs:
-
-* flask
-* requests
-* pyyaml
+* `bedrock-portal`
+* `prismarine-auth`
+* `express`
+* `cors`
+* `js-yaml`
 
 ---
 
@@ -94,51 +73,33 @@ Edit `config.yml`:
 server:
   ip: "play.pcsmp.net"
   port: 19132
-  world_version: "1.21.80"
+  world_version: "26.23"
 
 bot:
   cache_folder: "./cache"
   api_port: 3000
-  auto_start: true
-
-dashboard:
-  host: "0.0.0.0"
-  port: 5000
-  title: "PCrft Invite Panel"
-  message_text: >
-    If you want to rejoin the server, add "PCrft" on Xbox,
-    and you will be able to join through your friends list!
 ```
 
 ---
 
 ## Running the Bot
 
-Start the dashboard:
+Start the bot and dashboard:
 
 ```bash
-python dashboard.py
+npm start
 ```
 
-### What Happens
+The dashboard and API will be available at:
 
-1. `dashboard.py` automatically starts `bot.js`
-2. `bot.js` launches the Xbox Portal API on:
-
-```
-http://localhost:3000
-```
-
-3. Flask hosts the dashboard on:
-
-```
-http://0.0.0.0:5000
+```text
+http://0.0.0.0:3000
 ```
 
 Open your browser and navigate to:
 
-```
-http://your-server-ip:5000
+```text
+http://your-server-ip:3000
 ```
 
 ---
@@ -147,10 +108,16 @@ http://your-server-ip:5000
 
 On the first launch:
 
-1. `bedrock-portal` and `prismarine-auth` will generate a Microsoft Device Login URL and code.
-2. Open the URL shown in the Node.js console.
-3. Enter the provided code.
-4. Sign in with your Microsoft/Xbox account.
+1. `bedrock-portal` and `prismarine-auth` will generate a Microsoft Device Login URL and code in the Node.js console.
+2. Open the URL shown in the console, or visit:
+
+```text
+http://your-server-ip:3000/auth
+```
+
+3. Click the Microsoft Device Login link.
+4. Enter the provided code.
+5. Sign in with your Microsoft/Xbox account.
 
 After authentication:
 
@@ -162,9 +129,9 @@ After authentication:
 
 ## Using the Dashboard
 
-1. Open the dashboard in your browser.
-2. Enter a player's Xbox Gamertag.
-3. Select one of the following actions:
+Open the dashboard in your browser.
+
+Enter a player's Xbox Gamertag and choose an action.
 
 ### Invite
 
@@ -172,7 +139,9 @@ Sends an Xbox invite.
 
 ### Send Message
 
-Sends the configured message.
+Sends the configured message:
+
+> If you want to rejoin the server, add "PCrft" on Xbox, and you will be able to join through your friends list!
 
 ### Invite + Message
 
@@ -182,7 +151,7 @@ Sends both an invite and the configured message.
 
 ## Status Indicator
 
-The dashboard includes a live portal status pill:
+The dashboard includes a live portal status indicator.
 
 | Status  | Meaning                         |
 | ------- | ------------------------------- |
@@ -190,52 +159,7 @@ The dashboard includes a live portal status pill:
 | Offline | Portal is not running           |
 | Error   | API or authentication issue     |
 
-If the portal shows Offline or Error, check the Node.js console logs.
-
----
-
-## HTTPS Setup (Optional)
-
-### Nginx Proxy Manager
-
-Ensure `dashboard.py` is running on port `5000`.
-
-Create a new Proxy Host:
-
-#### Details
-
-Domain:
-
-```
-invite.yourdomain.com
-```
-
-Forward Host:
-
-```
-your-server-ip
-```
-
-Forward Port:
-
-```
-5000
-```
-
-#### SSL
-
-Enable:
-
-* Request a new Let's Encrypt certificate
-* Force SSL
-* HTTP/2 Support
-* HSTS
-
-Your dashboard will then be available at:
-
-```
-https://invite.yourdomain.com
-```
+If the portal shows **Offline** or **Error**, check the Node.js console logs.
 
 ---
 
@@ -244,11 +168,8 @@ https://invite.yourdomain.com
 ```text
 pcrft/
 ├── bot.js
-├── dashboard.py
 ├── config.yml
 ├── package.json
-├── requirements.txt
-├── cache/
 └── README.md
 ```
 
@@ -273,10 +194,3 @@ This project is intended for managing Xbox invites for Minecraft Bedrock Edition
 ## License
 
 MIT License
-
-```
-
-Copyright (c) PCrft
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files to deal in the Software without restriction.
-```
