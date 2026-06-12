@@ -1,6 +1,6 @@
 {
-  "name": "PCrft",
-  "version": "1.1.0",
+  "name": "pcrft",
+  "version": "1.0.0",
   "description": "PCrft Xbox Invite Bot - Node.js Xbox Live bot with web dashboard",
   "main": "bot.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "js-yaml": "^4.1.0",
-    "prismarine-auth": "^2.0.0"
+    "prismarine-auth": "^2.0.0",
+    "node-fetch": "^3.3.2"
   }
 }
