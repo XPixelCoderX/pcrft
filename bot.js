@@ -12,14 +12,10 @@ const config = yaml.load(fs.readFileSync(configPath, 'utf8'));
 
 const SERVER_IP = config.server.ip;
 const SERVER_PORT = config.server.port;
-const WORLD_VERSION = config.server.world_version || '26.23';
+const WORLD_VERSION = config.server.world_version || '1.21.80';
 
 const CACHE_FOLDER = config.bot.cache_folder || './cache';
 const API_PORT = config.bot.api_port || 3000;
-
-const MESSAGE_TEXT =
-  (config.message && config.message.text) ||
-  'If you want to rejoin the server, add "PCrft" on Xbox, and you will be able to join through your friends list!';
 
 // ================== AUTH / PORTAL ==================
 console.log('[INFO] Initializing Xbox authentication (prismarine-auth).');
@@ -55,14 +51,6 @@ async function invitePlayer(gamertag) {
   console.log(`[INFO] Sending invite to ${gamertag}...`);
   await portal.invitePlayer(gamertag);
   console.log(`[OK] Invite sent to ${gamertag}.`);
-}
-
-async function messagePlayer(gamertag) {
-  await ensurePortalStarted();
-  console.log(`[INFO] Message for ${gamertag}: ${MESSAGE_TEXT}`);
-  // No direct DM API; we still send an invite so they get a notification.
-  await portal.invitePlayer(gamertag);
-  console.log(`[OK] Message (via invite) processed for ${gamertag}.`);
 }
 
 // ================== EXPRESS APP ==================
@@ -178,15 +166,6 @@ const HTML = `
   input[type="text"]:focus {
     border-color: var(--accent);
   }
-  .hint {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 6px;
-  }
-  .hint span {
-    color: var(--accent);
-    font-weight: 500;
-  }
   .button-row {
     display: flex;
     gap: 8px;
@@ -205,12 +184,6 @@ const HTML = `
   }
   button.primary {
     background: #2b2b2b;
-  }
-  button.danger {
-    background: #3a1b1b;
-  }
-  button.secondary {
-    background: #1f1f1f;
   }
   button:hover {
     filter: brightness(1.1);
@@ -279,7 +252,7 @@ const HTML = `
   <div class="card-header">
     <div class="title-block">
       <div class="title">PCrft Xbox Invite Bot</div>
-      <div class="subtitle">Gamertag input, instant invite and message.</div>
+      <div class="subtitle">Gamertag input, instant invite.</div>
     </div>
     <div class="status-pill" id="status-pill">
       <span class="status-dot" id="status-dot"></span>
@@ -291,16 +264,10 @@ const HTML = `
   <div class="field-group">
     <div class="field-label">Xbox Gamertag</div>
     <input id="gamertag" type="text" placeholder="Example: n2ab" autocomplete="off">
-    <div class="hint">
-      Message includes:
-      <span id="message-preview"></span>
-    </div>
   </div>
 
   <div class="button-row">
-    <button class="secondary" id="btn-invite">Invite</button>
-    <button class="danger" id="btn-message">Send Message</button>
-    <button class="primary" id="btn-both">Invite + Message</button>
+    <button class="primary" id="btn-invite">Invite</button>
   </div>
 
   <div class="footer">
@@ -344,7 +311,7 @@ async function callEndpoint(path, gamertag) {
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || 'Unknown error');
-    showToast('success', 'Success', 'Action completed for ' + gamertag.trim() + '.');
+    showToast('success', 'Success', 'Invite sent to ' + gamertag.trim() + '.');
   } catch (err) {
     showToast('error', 'Error', err.message || 'Request failed.');
   }
@@ -353,14 +320,6 @@ async function callEndpoint(path, gamertag) {
 document.getElementById('btn-invite').addEventListener('click', () => {
   const g = document.getElementById('gamertag').value;
   callEndpoint('/api/invite', g);
-});
-document.getElementById('btn-message').addEventListener('click', () => {
-  const g = document.getElementById('gamertag').value;
-  callEndpoint('/api/message', g);
-});
-document.getElementById('btn-both').addEventListener('click', () => {
-  const g = document.getElementById('gamertag').value;
-  callEndpoint('/api/invite-and-message', g);
 });
 
 async function refreshStatus() {
@@ -378,7 +337,6 @@ async function refreshStatus() {
       val.textContent = 'Offline';
     }
     info.textContent = data.serverIp + ':' + data.serverPort;
-    document.getElementById('message-preview').textContent = data.messageText;
   } catch (e) {
     const dot = document.getElementById('status-dot');
     const val = document.getElementById('status-value');
@@ -443,37 +401,11 @@ app.post('/api/invite', async (req, res) => {
   }
 });
 
-app.post('/api/message', async (req, res) => {
-  const { gamertag } = req.body || {};
-  if (!gamertag) return res.status(400).json({ ok: false, error: 'gamertag required' });
-  try {
-    await messagePlayer(gamertag);
-    res.json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ ok: false, error: err.message || 'message failed' });
-  }
-});
-
-app.post('/api/invite-and-message', async (req, res) => {
-  const { gamertag } = req.body || {};
-  if (!gamertag) return res.status(400).json({ ok: false, error: 'gamertag required' });
-  try {
-    await invitePlayer(gamertag);
-    await messagePlayer(gamertag);
-    res.json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ ok: false, error: err.message || 'invite+message failed' });
-  }
-});
-
 app.get('/api/status', (_req, res) => {
   res.json({
     portalStarted,
     serverIp: SERVER_IP,
-    serverPort: SERVER_PORT,
-    messageText: MESSAGE_TEXT
+    serverPort: SERVER_PORT
   });
 });
 
