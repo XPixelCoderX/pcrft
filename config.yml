@@ -3,7 +3,7 @@ version: "1.0.0"
 server:
   ip: "play.pcsmp.net"
   port: 19132
-  world_version: "1.21.80"
+  world_version: "latest"   # auto-detect newest version
 
 bot:
   cache_folder: "./cache"
