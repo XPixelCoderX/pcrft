@@ -22,7 +22,14 @@ The **PCrft Xbox Invite Bot** is a two-part system that makes inviting Bedrock p
 
 ### Default Message
 
-> If you want to rejoin the server, add "PCrft" on Xbox, and you will be able to join through your friends list!
+Configured in `config.yml`:
+
+```yaml
+message:
+  text: >
+    If you want to rejoin the server, add "PCrft" on Xbox,
+    and you will be able to join through your friends list!
+```
 
 ---
 
@@ -49,7 +56,7 @@ git clone https://github.com/XPixelCoderX/pcrft.git
 cd pcrft
 ```
 
-### 2. Install Dependencies
+### 2. Install Node Dependencies
 
 ```bash
 npm install
@@ -78,6 +85,11 @@ server:
 bot:
   cache_folder: "./cache"
   api_port: 3000
+
+message:
+  text: >
+    If you want to rejoin the server, add "PCrft" on Xbox,
+    and you will be able to join through your friends list!
 ```
 
 ---
@@ -90,17 +102,19 @@ Start the bot and dashboard:
 npm start
 ```
 
-The dashboard and API will be available at:
+The HTTP dashboard and API will be available at:
 
 ```text
-http://0.0.0.0:3000
+http://127.0.0.1:3000
 ```
 
 Open your browser and navigate to:
 
 ```text
-http://your-server-ip:3000
+http://127.0.0.1:3000
 ```
+
+If you are accessing from another machine, replace `127.0.0.1` with your server IP.
 
 ---
 
@@ -112,11 +126,11 @@ On the first launch:
 2. Open the URL shown in the console, or visit:
 
 ```text
-http://your-server-ip:3000/auth
+http://127.0.0.1:3000/auth
 ```
 
 3. Click the Microsoft Device Login link.
-4. Enter the provided code.
+4. Enter the provided code from the console.
 5. Sign in with your Microsoft/Xbox account.
 
 After authentication:
@@ -131,7 +145,9 @@ After authentication:
 
 Open the dashboard in your browser.
 
-Enter a player's Xbox Gamertag and choose an action.
+Enter a player's Xbox Gamertag.
+
+Select one of the following actions:
 
 ### Invite
 
@@ -139,9 +155,7 @@ Sends an Xbox invite.
 
 ### Send Message
 
-Sends the configured message:
-
-> If you want to rejoin the server, add "PCrft" on Xbox, and you will be able to join through your friends list!
+Sends the configured message from `config.yml`.
 
 ### Invite + Message
 
@@ -151,7 +165,7 @@ Sends both an invite and the configured message.
 
 ## Status Indicator
 
-The dashboard includes a live portal status indicator.
+The dashboard includes a live portal status pill:
 
 | Status  | Meaning                         |
 | ------- | ------------------------------- |
@@ -194,3 +208,16 @@ This project is intended for managing Xbox invites for Minecraft Bedrock Edition
 ## License
 
 MIT License
+
+---
+
+## Future Ideas
+
+Possible future additions:
+
+* Recent invite history stored in a JSON file
+* Dashboard activity log
+* Multiple message templates
+* Invite statistics
+* Webhook notifications
+* Multiple bot account support
