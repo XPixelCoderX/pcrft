@@ -1,12 +1,12 @@
 {
-  "name": "pcrft",
-  "version": "1.0.0",
-  "description": "PCrft Xbox Invite Bot - Node.js Xbox Live bot + Python dashboard",
+  "name": "PCrft",
+  "version": "1.1.0",
+  "description": "PCrft Xbox Invite Bot - Node.js Xbox Live bot with web dashboard",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
-  "author": "PCrft",
+  "author": "n2ab",
   "license": "MIT",
   "dependencies": {
     "bedrock-portal": "^1.0.0",
